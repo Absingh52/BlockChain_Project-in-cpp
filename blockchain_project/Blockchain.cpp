@@ -2,6 +2,8 @@
 // openssl for SHA-256 hashing for security algorithm 
 #include<openssl/sha.h>
 #include<iomanip>
+#include<string>
+#include<ctime>
 
 // convert data to SHA-256 hash
 string sha256(const string str){
@@ -21,4 +23,59 @@ string sha256(const string str){
     }
     //return the binary hash into string 
     return ss.str();
+}
+// Block constructor
+    Block::Block(int idx,string dta,string prevHash){
+      this->index=idx;
+      this->data=dta;
+      this->prevHash=prevHash;
+      this->timestamp=getTime();
+      this->hash=calculateHash();
+    }
+//  generating hash for every block by combining the index+data+timestamp+prevHash
+   string Block::calculateHash(){
+      string record= to_string(index)+timestamp+prevHash+data;
+      return sha256(record);
+   }
+
+// with help of gettime() we can get time from current system
+   string Block::getTime(){
+      time_t now=time(0);// time_t is a datatype for representing the calender
+      // time() fetch the current time from the system its not returns -1
+      char buf[80];
+      // strftime converts the structre time to string 
+      strftime(buf,sizeof(buf),"%Y-%m-%d %X",localtime(&now));
+      /*
+        in this function localtime coverts timestamp
+        into the structre format and then sets it into string format
+        and then stores it in the buf array
+      */
+      return string(buf);
+   }
+
+  //  blockchain
+  Blockchain::Blockchain(){
+      chain.push_back(Block(0, "Genesis Block", "0"));
+  }
+  // last_BlocK_position
+  Block Blockchain::getLatestBlock() {
+    return chain.back();
+  }
+// addBlock
+void Blockchain::addBlocK(string data){
+   Block newBlock(chain.size(), data, getLatestBlock().hash);
+    chain.push_back(newBlock);
+}
+
+// Print blockchain
+
+void Blockchain::printBlockchain(){
+  for(auto &block:chain){
+     cout << "Index: " << block.index << endl;
+        cout << "Timestamp: " << block.timestamp << endl;
+        cout << "Data: " << block.data << endl;
+        cout << "PrevHash: " << block.prevHash << endl;
+        cout << "Hash: " << block.hash << endl;
+        cout << "-----------------------------" << endl;
+  }
 }

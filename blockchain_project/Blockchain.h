@@ -35,12 +35,14 @@ class Block
 };
 // class for blockchain which define the chain of blocks and new blocks in the chain
 class Blockchain{
+    private:
+        vector<Block>chain;
     public:
         // constructer which intialize the blockchain 
         Blockchain();
-        // Returns the last block in the chain (to know where to link the new block
+        // Returns the last block in the chain to know where to link the new block
         Block getLatestBlock();
-        // creates new block with giben data and adds its to the chain
+        // creates new block with given data and adds its to the chain
         void addBlock(string data);
         // print all the blocks from the  blockchain for debugging or output
         void printBlockchain();
