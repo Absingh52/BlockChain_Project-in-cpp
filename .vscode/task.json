@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build Blockchain Project",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-Wall",
+                "-Wextra",
+                "-g3",
+                "d:\\blockchain\\blockchain_project\\Blockchain.cpp",
+                "-o",
+                "d:\\blockchain\\blockchain_project\\output\\Blockchain.exe",
+                "-IC:\\OpenSSL-Win64\\include",
+                "-LC:\\OpenSSL-Win64\\lib",
+                "-lssl",
+                "-lcrypto"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"]
+        }
+    ]
+}
