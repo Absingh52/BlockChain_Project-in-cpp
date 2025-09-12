@@ -1,0 +1,36 @@
+# Build artifacts
+/build/
+/CMakeFiles/
+/CMakeCache.txt
+/Makefile
+/*.make
+/*.ninja
+/.ninja_deps
+/.ninja_log
+
+# Executables and binaries
+*.exe
+*.dll
+*.lib
+*.so
+*.a
+*.out
+*.obj
+*.o
+
+# Logs
+*.log
+
+# VSCode settings
+.vscode/
+*.code-workspace
+
+# Backup/temporary files
+*.swp
+*~
+*.tmp
+*.bak
+
+# OS-specific files
+.DS_Store
+Thumbs.db
