@@ -1,0 +1,19 @@
+# Force Unix-style LF line endings in repo
+* text=auto eol=lf
+
+# C++ source files
+*.cpp text eol=lf
+*.h   text eol=lf
+
+# Config/JSON files
+*.json text eol=lf
+
+# Logs & build artifacts
+*.log text eol=lf
+
+# Ignore binary files from line-ending checks
+*.exe binary
+*.dll binary
+*.png binary
+*.jpg binary
+*.pdf binary

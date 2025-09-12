@@ -1,21 +1,23 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.15)
 
-project(SimpleBlockchain)
+# Project name
+project(BlockchainProject LANGUAGES CXX)
 
+# Use C++17 (you can change to C++20 if needed)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Manually point CMake to OpenSSL
-set(OPENSSL_ROOT_DIR "C:/OpenSSL-Win64")
-set(OPENSSL_INCLUDE_DIR "${OPENSSL_ROOT_DIR}/include")
-set(OPENSSL_LIBRARIES "${OPENSSL_ROOT_DIR}/lib")
-
-find_package(OpenSSL REQUIRED)
-
-add_executable(SimpleBlockchain
+# Add the source files
+add_executable(blockchain
     main.cpp
     Blockchain.cpp
 )
 
-target_include_directories(SimpleBlockchain PRIVATE ${OPENSSL_INCLUDE_DIR})
-target_link_libraries(SimpleBlockchain PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+# Find OpenSSL
+find_package(OpenSSL REQUIRED)
+
+# Link OpenSSL libraries
+target_link_libraries(blockchain PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+
+# Include OpenSSL headers
+target_include_directories(blockchain PRIVATE ${OPENSSL_INCLUDE_DIR})

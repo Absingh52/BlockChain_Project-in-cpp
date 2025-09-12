@@ -4,6 +4,7 @@
 #include<iomanip>
 #include<string>
 #include<ctime>
+using namespace std;
 
 // convert data to SHA-256 hash
 string sha256(const string str){
@@ -62,10 +63,11 @@ string sha256(const string str){
     return chain.back();
   }
 // addBlock
-void Blockchain::addBlocK(string data){
-   Block newBlock(chain.size(), data, getLatestBlock().hash);
+void Blockchain::addBlock(string data){
+    Block newBlock(chain.size(), data, getLatestBlock().hash);
     chain.push_back(newBlock);
 }
+
 
 // Print blockchain
 
