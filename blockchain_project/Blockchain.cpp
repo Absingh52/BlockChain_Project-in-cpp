@@ -31,13 +31,25 @@ string sha256(const string str){
       this->data=dta;
       this->prevHash=prevHash;
       this->timestamp=getTime();
+       this->nonce=0;
       this->hash=calculateHash();
+     
     }
 //  generating hash for every block by combining the index+data+timestamp+prevHash
    string Block::calculateHash(){
-      string record= to_string(index)+timestamp+prevHash+data;
+      string record= to_string(index)+timestamp+prevHash+data+to_string(nonce);
       return sha256(record);
    }
+  
+  //  Mines the block first until hash starts from zero;
+  void Block::mineBlock(int difficulty ){
+      string target(difficulty,'0');
+      while(hash.substr(0,difficulty) != target){
+          nonce++;
+          hash=calculateHash();
+      }
+      cout<<"Blocked mined: "<<hash<<"(nonce="<<nonce<<")"<<endl;
+  }
 
 // with help of gettime() we can get time from current system
    string Block::getTime(){
@@ -55,17 +67,38 @@ string sha256(const string str){
    }
 
   //  blockchain
-  Blockchain::Blockchain(){
-      chain.push_back(Block(0, "Genesis Block", "0"));
+  Blockchain::Blockchain(int diff,int targetTime){
+      difficulty=diff;
+      targetBlocktime=targetTime;
+      Block genesis(0, " famous Block", "0");
+      genesis.mineBlock(difficulty);
+      chain.push_back(genesis);
   }
   // last_BlocK_position
-  Block Blockchain::getLatestBlock() {
+  Block& Blockchain::getLatestBlock() {
     return chain.back();
   }
 // addBlock
 void Blockchain::addBlock(string data){
-    Block newBlock(chain.size(), data, getLatestBlock().hash);
+    Block newBlock(chain.size(), data, getLatestBlock().hash); // creating new block with this data
+    time_t start =time(0);
+    newBlock.mineBlock(difficulty);
+    time_t end=time(0);
+
     chain.push_back(newBlock);
+
+    // mining time adjust on the basis of time taken for mining one block
+    int mineTime=int(difftime(end,start));
+    // case 1: if minning time is less then target time increase difficulty make it more secure
+    if(mineTime<targetBlocktime){
+      difficulty++;
+      cout<<"Difficulty increased to :"<<difficulty<<endl;
+    }   
+    // case 2: if mining time is more then target time then dec difficulty make it faster 
+    else if(mineTime > targetBlocktime && difficulty>1){
+          difficulty--;
+          cout<<"Difficulty decreased to :"<<difficulty<<endl;
+    }
 }
 
 
@@ -78,6 +111,23 @@ void Blockchain::printBlockchain(){
         cout << "Data: " << block.data << endl;
         cout << "PrevHash: " << block.prevHash << endl;
         cout << "Hash: " << block.hash << endl;
-        cout << "-----------------------------" << endl;
+         cout << "Nonce: " << block.nonce << endl;
+        cout << endl;
   }
+}
+
+// check chain validation 
+bool Blockchain::isChainValid(){
+      for(size_t i=1;i<chain.size();i++){
+        Block currentBlock=chain[i];
+        Block prevBlock=chain[i-1];
+
+        if(currentBlock.hash != currentBlock.calculateHash()){
+            return false;
+        }
+        else if(prevBlock.hash != prevBlock.calculateHash()){
+          return false;
+        }
+      }
+      return true;
 }

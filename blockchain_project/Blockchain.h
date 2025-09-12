@@ -8,6 +8,8 @@
 #include<ctime>
 #include<string>
 #include<sstream>
+#include <openssl/sha.h>
+
 // sstream take a string and convert it into stream and vice versa
 
 using namespace std;
@@ -30,22 +32,30 @@ class Block
         Block(int idx,string dta,string prevHash);
         // function for generating a unique hash for the block by combining the index,timestamp,data and prevHash
         string calculateHash();
+        // mines Block
+        void mineBlock(int difficulty);
         // gets system time for storing the block as a string(for timestamp)
         string getTime();
+        // nonce for hashing count with diffculty level(POW)
+        long long nonce;
 };
 // class for blockchain which define the chain of blocks and new blocks in the chain
 class Blockchain{
     private:
         vector<Block>chain;
+        int difficulty;
+        int targetBlocktime;
     public:
         // constructer which intialize the blockchain 
-        Blockchain();
+        Blockchain(int diff,int targetTime);
         // Returns the last block in the chain to know where to link the new block
-        Block getLatestBlock();
+        Block& getLatestBlock();
         // creates new block with given data and adds its to the chain
         void addBlock(string data);
         // print all the blocks from the  blockchain for debugging or output
         void printBlockchain();
+        // check validity of chain
+        bool isChainValid();
 
 };
 #endif
