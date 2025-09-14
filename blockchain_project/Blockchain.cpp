@@ -68,8 +68,8 @@ string sha256(const string str){
 
   //  blockchain
   Blockchain::Blockchain(int diff,int targetTime){
-      difficulty=diff;
-      targetBlocktime=targetTime;
+      difficulty=(diff>=1? diff :1);
+      targetBlocktime=(targetTime>=1? targetTime : 1);
       Block genesis(0, " famous Block", "0");
       genesis.mineBlock(difficulty);
       chain.push_back(genesis);
