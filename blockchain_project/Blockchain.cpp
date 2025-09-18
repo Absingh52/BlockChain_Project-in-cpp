@@ -26,21 +26,50 @@ string sha256(const string str){
     return ss.str();
 }
 // Block constructor
-    Block::Block(int idx,string dta,string prevHash){
+    Block::Block(int idx,vector<Transaction>trx,string prevHash){
       this->index=idx;
-      this->data=dta;
+      this->transcation=trx;
       this->prevHash=prevHash;
       this->timestamp=getTime();
        this->nonce=0;
+      this->merkleRoot=calculateMerkleroot();
       this->hash=calculateHash();
-     
+      
     }
 //  generating hash for every block by combining the index+data+timestamp+prevHash
-   string Block::calculateHash(){
-      string record= to_string(index)+timestamp+prevHash+data+to_string(nonce);
+   string Block::calculateHash() const{
+      string record= to_string(index)+timestamp+prevHash+merkleRoot+to_string(nonce);
       return sha256(record);
    }
   
+//merkleroot calculate functionn()
+    string Block::calculateMerkleroot() const{
+      if(transcation.empty()){
+        return "";
+      }
+
+      vector<string>merkle;
+      for(auto & tx:transcation){
+            merkle.push_back(sha256(tx.toString()));
+
+      }
+
+      while(merkle.size()>1){
+
+        if(merkle.size() %2!=0){
+           merkle.push_back(merkle.back());
+        }
+
+        vector<string>newmerkle;
+        for(size_t i=0; i<merkle.size();i+=2){
+          newmerkle.push_back(sha256(merkle[i] + merkle[i+1]));
+        }
+        merkle=newmerkle;
+      }
+       return merkle[0];
+  
+    }
+
   //  Mines the block first until hash starts from zero;
   void Block::mineBlock(int difficulty ){
       string target(difficulty,'0');
@@ -52,7 +81,7 @@ string sha256(const string str){
   }
 
 // with help of gettime() we can get time from current system
-   string Block::getTime(){
+   string Block::getTime() const{
       time_t now=time(0);// time_t is a datatype for representing the calender
       // time() fetch the current time from the system its not returns -1
       char buf[80];
@@ -70,7 +99,8 @@ string sha256(const string str){
   Blockchain::Blockchain(int diff,int targetTime){
       difficulty=(diff>=1? diff :1);
       targetBlocktime=(targetTime>=1? targetTime : 1);
-      Block genesis(0, " famous Block", "0");
+      vector<Transaction>genesisTxs={Transaction("genesis","network",0.0)};
+       Block genesis(0, genesisTxs, "0");
       genesis.mineBlock(difficulty);
       chain.push_back(genesis);
   }
@@ -79,8 +109,8 @@ string sha256(const string str){
     return chain.back();
   }
 // addBlock
-void Blockchain::addBlock(string data){
-    Block newBlock(chain.size(), data, getLatestBlock().hash); // creating new block with this data
+void Blockchain::addBlock(vector<Transaction> transaction){
+    Block newBlock(chain.size(), transaction, getLatestBlock().hash); // creating new block with this data
     time_t start =time(0);
     newBlock.mineBlock(difficulty);
     time_t end=time(0);
@@ -103,31 +133,31 @@ void Blockchain::addBlock(string data){
 
 
 // Print blockchain
-
-void Blockchain::printBlockchain(){
-  for(auto &block:chain){
-     cout << "Index: " << block.index << endl;
+void Blockchain::printBlockchain() const {
+    cout << "\n=== Blockchain (" << chain.size() << " blocks) ===\n\n";
+    for (const auto& block : chain) {
+        cout << "Index: " << block.index << endl;
         cout << "Timestamp: " << block.timestamp << endl;
-        cout << "Data: " << block.data << endl;
-        cout << "PrevHash: " << block.prevHash << endl;
-        cout << "Hash: " << block.hash << endl;
-         cout << "Nonce: " << block.nonce << endl;
-        cout << endl;
-  }
+        cout << "PrevHash: " << block.prevHash.substr(0, 16) << "..." << endl;
+        cout << "MerkleRoot: " << block.merkleRoot.substr(0, 16) << "..." << endl;
+        cout << "Hash: " << block.hash.substr(0, 16) << "..." << endl;
+        cout << "Nonce: " << block.nonce << endl;
+        cout << "Transactions:" << endl;
+        for (auto &tx : block.transcation) {
+            cout << "  - " << tx.toString() << endl;
+        }
+        cout << "-----------------------------\n";
+    }
 }
 
-// check chain validation 
-bool Blockchain::isChainValid(){
-      for(size_t i=1;i<chain.size();i++){
-        Block currentBlock=chain[i];
-        Block prevBlock=chain[i-1];
+bool Blockchain::isChainValid() const {
+    for (size_t i = 1; i < chain.size(); ++i) {
+        const Block& current = chain[i];
+        const Block& prev = chain[i - 1];
 
-        if(currentBlock.hash != currentBlock.calculateHash()){
-            return false;
-        }
-        else if(prevBlock.hash != prevBlock.calculateHash()){
-          return false;
-        }
-      }
-      return true;
+        if (current.hash != current.calculateHash()) return false;
+        if (current.prevHash != prev.hash) return false;
+        if (current.merkleRoot != current.calculateMerkleroot()) return false;
+    }
+    return true;
 }

@@ -1,21 +1,66 @@
 #include "Blockchain.h"
+#include <limits>
 
 int main() {
-    int userDifficulty,targetTime;
-    cout << "Enter starting difficulty: ";
-    cin >> userDifficulty;
+    cout << "=== Mini Blockchain (C++) ===" << endl;
+
+    int startDifficulty, targetTime;
+    cout << "Enter starting difficulty (2-5): ";
+    if (!(cin >> startDifficulty)) {
+        startDifficulty = 3;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+
     cout << "Enter target block time (seconds): ";
-    cin >> targetTime;
+    if (!(cin >> targetTime)) {
+        targetTime = 5;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
 
-    Blockchain myBlockchain(userDifficulty,targetTime);
+    Blockchain myChain(startDifficulty, targetTime);
 
-    myBlockchain.addBlock("First transaction: Vivek pays 5 BTC to Abhishek");
-    myBlockchain.addBlock("Second transaction: Abhishek pays 2 BTC to Rohan");
-    myBlockchain.addBlock("Third transaction: Rohan pays 1 BTC to Alice");
+    // 1️⃣ Inline demo transactions
+    myChain.addBlock({
+        {"Vivek", "Abhishek", 500},
+        {"Abhishek", "Rohan", 20}
+    });
 
-    myBlockchain.printBlockchain();
-    
-    cout << "Blockchain valid? "<< (myBlockchain.isChainValid() ? "Yes" : "No") << endl;
+    myChain.addBlock({
+        {"Rohan", "Alice", 15},
+        {"Alice", "Vivek", 7},
+        {"Bob", "Charlie", 314159}
+    });
+
+    // 2️⃣ User-input transactions
+    int txCount;
+    cout << "\nEnter number of transactions for new block: ";
+    cin >> txCount;
+
+    vector<Transaction> userTxs;
+    for (int i = 0; i < txCount; i++) {
+        string sender, receiver;
+        double amount;
+
+        cout << "Transaction " << (i+1) << " sender: ";
+        cin >> sender;
+        cout << "Transaction " << (i+1) << " receiver: ";
+        cin >> receiver;
+        cout << "Transaction " << (i+1) << " amount: ";
+        cin >> amount;
+
+        userTxs.emplace_back(sender, receiver, amount);
+    }
+
+    myChain.addBlock(userTxs);
+
+    // Print blockchain
+    myChain.printBlockchain();
+
+    cout << "Blockchain valid? " 
+         << (myChain.isChainValid() ? "Yes " : "No") 
+         << endl;
 
     return 0;
 }
