@@ -1,6 +1,52 @@
 # BlockChain\_Project-in-cpp
 
-# ⛓️ Mini Blockchain in C++
+# ⛓️ Mini Blockchain in C++class Solution {
+
+  public:
+    // Function to find minimum number of pages.
+    bool isPossible( int n,int m,int mid, vector<int>&arr){
+        int studentCount=1;
+        int pagesum=0;
+        for(int i=0;i<n;i++){
+          if(pagesum+arr[i]<=mid){
+            pagesum=pagesum+arr[i];
+          }
+          else{
+            studentCount++;
+              if(studentCount>m || arr[i]>mid){
+                return false;
+              }
+              pagesum=arr[i];
+          }
+        }
+        return true;
+    }
+
+    long long findPages(int n, vector<int>arr, int m) { 
+      if(m>n){
+        return-1;
+      }
+       int min=0;
+       int max=0;
+       for(int i=0;i<n;i++){
+         max=max+arr[i];
+       }
+      int s=min;
+       int e=max;
+      int ans=-1;
+       int mid=s+(e-s)/2;
+       while(s<=e){
+        if(isPossible(n, m, mid, arr))
+             { ans=mid;
+              e=mid-1;}
+         else{
+           s=mid+1;
+         }
+          mid=s+(e-s)/2;
+       }
+       return ans;
+    }
+};
 
 This project is a **mini blockchain implementation in C++** built from scratch using **SHA-256 (OpenSSL)** for hashing.
 It demonstrates **core blockchain concepts** such as blocks, hashing, Proof-of-Work (PoW), nonce, chain validation, **Merkle root for transactions**, and **dynamic difficulty adjustment**.
@@ -93,3 +139,4 @@ Transactions in block: \[Alice→Bob: 10, Bob→Charlie: 5]
 Merkle Root: 5f3a9c...
 
 Blockchain valid? Yes
+
