@@ -1,5 +1,31 @@
 // prevents redefination of the classes in multiple cpp files 
 // like if class is already define then dont define it again just it  
+
+/*
+1=>Wallets + Digital Signatures
+
+Dikhata hai ki tumhe cryptography aur security samajh hai.
+
+Ye hi core hai blockchain ka.
+
+2=>Transaction Pool + Miner Rewards
+
+Dikhata hai ki tumhe blockchain ka economic incentive model samajh hai.
+
+Miner reward + fees = motivation to mine → real-world alignment.
+
+3=>Blockchain Explorer CLI
+
+Tumhari chain ke saath interact karne ka tool dega.
+
+Interviewer ko demo dene ka sabse simple aur clear way.
+
+4=>Persistence (file/db)
+
+Ye project ko real application jaisa bana dega (program band karke dubara chalane par chain wahi se continue hogi).
+
+Software engineering value: file I/O, serialization, reliability.
+*/
 #ifndef BLOCKCHAIN_H
 #define BLOCKCHAIN_H
 // header files for declaration 
