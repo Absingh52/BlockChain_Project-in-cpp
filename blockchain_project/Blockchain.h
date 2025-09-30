@@ -43,15 +43,16 @@ using namespace std;
 
 
 struct Transaction {
-    string sender;
-    string receiver;
+    string senderPubKey;
+    string receiverPubKey;
     string timestamp;
     double amount;
+    string signatureHex;
 
 
     Transaction( const string& s,const string& r, const double& a  ){
-        sender=s;
-        receiver=r;
+        senderPubKey=s;
+        receiverPubKey=r;
         amount=a;
         time_t now=time(0);
         char buf[80];
@@ -62,9 +63,10 @@ struct Transaction {
     // transaction string 
     string toString() const{
         stringstream ss;
-        ss<<sender<<" -> "<<receiver<<" : "<<fixed << setprecision(8)<< amount<<" BTC "<< " at "<<timestamp;
+        ss<<senderPubKey<<" | "<<receiverPubKey<<" | "<<fixed << setprecision(8)<< amount<<" BTC "<< " at "<<timestamp;
         return ss.str();
     }
+
 
 };
 string sha256(const string str);
@@ -102,15 +104,19 @@ class Block
 // class for blockchain which define the chain of blocks and new blocks in the chain
 class Blockchain{
     private:
-        vector<Block>chain;
+        vector<Block>chain;// chain wala vector
+        vector<Transaction>mempool;// ye transaction wala vector jha block m dalne se phle store hogi
         int difficulty;
         int targetBlocktime;
-    public:
+        double blockreward=50.0; 
+        public:
         // constructer which intialize the blockchain 
         Blockchain(int diff,int targetTime);
         // Returns the last block in the chain to know where to link the new block
         Block& getLatestBlock();
         // creates new block with given data and adds its to the chain
+        void addTransaction(const Transaction &tx); //mempool m add hogi transaction
+        void minePendingTransactions(const string& minerAddress); //mine all pending transactions 
         void addBlock(vector<Transaction> transactions );
         // print all the blocks from the  blockchain for debugging or output
         void printBlockchain() const;

@@ -12,7 +12,7 @@ Wallet::Wallet(){
     }
     
     // with help of of that key object we create private and public keys 
-    // EC_KEY_generate_key is a function that generate the keys basis on the parameters
+    // EC_KEY_generate_key is a function that generate the keys basis on the parametersx
     //  also first it creates the private key and then public private->public
     if(!EC_KEY_generate_key(key)){
             throw runtime_error("EC_KEY_generate_key failed");
