@@ -1,66 +1,41 @@
 #include "Blockchain.h"
-#include <limits>
+#include "Wallet.h"
+#include <iostream>
+using namespace std;
 
 int main() {
-    cout << "=== Mini Blockchain (C++) ===" << endl;
+    cout << "=== Mini Blockchain with Wallets ===" << endl;
 
-    int startDifficulty, targetTime;
-    cout << "Enter starting difficulty (2-5): ";
-    if (!(cin >> startDifficulty)) {
-        startDifficulty = 3;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
+    // Create blockchain
+    Blockchain myChain(3, 5);
 
-    cout << "Enter target block time (seconds): ";
-    if (!(cin >> targetTime)) {
-        targetTime = 5;
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    }
+    // Create wallets for Alice, Bob, and Miner
+    Wallet alice;
+    Wallet bob;
+    Wallet miner;
 
-    Blockchain myChain(startDifficulty, targetTime);
+    cout << "Alice's Public Key: " << alice.public_key.substr(0, 50) << "...\n";
+    cout << "Bob's Public Key:   " << bob.public_key.substr(0, 50) << "...\n";
+    cout << "Miner's Public Key: " << miner.public_key.substr(0, 50) << "...\n\n";
 
-    // 1️⃣ Inline demo transactions
-    myChain.addBlock({
-        {"Vivek", "Abhishek", 500},
-        {"Abhishek", "Rohan", 20}
-    });
+    // ✅ Step 1: Alice sends 10 to Bob
+    Transaction tx1(alice.public_key, bob.public_key, 10.0);
+    tx1.signatureHex = alice.sign(tx1.toString()); // sign with Alice's private key
+    myChain.addTransaction(tx1);
 
-    myChain.addBlock({
-        {"Rohan", "Alice", 15},
-        {"Alice", "Vivek", 7},
-        {"Bob", "Charlie", 314159}
-    });
+    // ✅ Step 2: Bob sends 5 back to Alice
+    Transaction tx2(bob.public_key, alice.public_key, 5.0);
+    tx2.signatureHex = bob.sign(tx2.toString()); // sign with Bob's private key
+    myChain.addTransaction(tx2);
 
-    // 2️⃣ User-input transactions
-    int txCount;
-    cout << "\nEnter number of transactions for new block: ";
-    cin >> txCount;
+    // ✅ Step 3: Mine pending transactions (miner gets reward)
+    myChain.minePendingTransactions(miner.public_key);
 
-    vector<Transaction> userTxs;
-    for (int i = 0; i < txCount; i++) {
-        string sender, receiver;
-        double amount;
-
-        cout << "Transaction " << (i+1) << " sender: ";
-        cin >> sender;
-        cout << "Transaction " << (i+1) << " receiver: ";
-        cin >> receiver;
-        cout << "Transaction " << (i+1) << " amount: ";
-        cin >> amount;
-
-        userTxs.emplace_back(sender, receiver, amount);
-    }
-
-    myChain.addBlock(userTxs);
-
-    // Print blockchain
+    // Print the blockchain state
     myChain.printBlockchain();
 
-    cout << "Blockchain valid? " 
-         << (myChain.isChainValid() ? "Yes " : "No") 
-         << endl;
+    cout << "\nBlockchain valid? "
+         << (myChain.isChainValid() ? "Yes " : "No ") << endl;
 
     return 0;
 }

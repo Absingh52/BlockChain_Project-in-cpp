@@ -1,3 +1,6 @@
 {
-    "cmake.sourceDirectory": "D:/blockchain/blockchain_project"
+    "cmake.sourceDirectory": "D:/blockchain/blockchain_project",
+    "files.associations": {
+        "iostream": "cpp"
+    }
 }

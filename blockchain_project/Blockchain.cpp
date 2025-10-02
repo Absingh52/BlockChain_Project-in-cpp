@@ -4,9 +4,10 @@
 #include<iomanip>
 #include<string>
 #include<ctime>
+#include "Wallet.h"
 using namespace std;
 
-// convert data to SHA-256 hash
+// convert data to SHA-256 hash this is the id of the block
 string sha256(const string str){
     // SHA256_DIGEST_LENGTH is of 32 bytes which is 256 bits 
     // unsigned char range 0 to 255 
@@ -71,6 +72,7 @@ string sha256(const string str){
     }
 
   //  Mines the block first until hash starts from zero;
+  // (Proof of work)
   void Block::mineBlock(int difficulty ){
       string target(difficulty,'0');
       while(hash.substr(0,difficulty) != target){
@@ -95,10 +97,11 @@ string sha256(const string str){
       return string(buf);
    }
 
-  //  blockchain
+  //  blockchain constructor
   Blockchain::Blockchain(int diff,int targetTime){
       difficulty=(diff>=1? diff :1);
       targetBlocktime=(targetTime>=1? targetTime : 1);
+      //  genesis block with dummy transaction 
       vector<Transaction>genesisTxs={Transaction("genesis","network",0.0)};
        Block genesis(0, genesisTxs, "0");
       genesis.mineBlock(difficulty);
@@ -108,29 +111,47 @@ string sha256(const string str){
   Block& Blockchain::getLatestBlock() {
     return chain.back();
   }
-// addBlock
-void Blockchain::addBlock(vector<Transaction> transaction){
-    Block newBlock(chain.size(), transaction, getLatestBlock().hash); // creating new block with this data
-    time_t start =time(0);
-    newBlock.mineBlock(difficulty);
-    time_t end=time(0);
-
-    chain.push_back(newBlock);
-
-    // mining time adjust on the basis of time taken for mining one block
-    int mineTime=int(difftime(end,start));
-    // case 1: if minning time is less then target time increase difficulty make it more secure
-    if(mineTime<targetBlocktime){
-      difficulty++;
-      cout<<"Difficulty increased to :"<<difficulty<<endl;
-    }   
-    // case 2: if mining time is more then target time then dec difficulty make it faster 
-    else if(mineTime > targetBlocktime && difficulty>1){
-          difficulty--;
-          cout<<"Difficulty decreased to :"<<difficulty<<endl;
-    }
+// add transaction to mempool
+void Blockchain::addTransaction(const Transaction &tx)
+{
+  // check if the transaction is of the system if yes then continue
+  if(tx.senderPubKey != "System"){
+      if(! Wallet::verify(tx.toString(), tx.senderPubKey,tx.signatureHex)){
+            cout<<" Invalid transaction signautre"<<endl;
+            return;
+      }
+  }
+  mempool.push_back(tx);
+  cout<<"Transaction added to memepool :"<<tx.toString()<<endl;
 }
 
+// Mine all pending transactions 
+void Blockchain::minePendingTransactions(const string& minerAddress){
+    // Add miner reward 
+      Transaction rewardTx("System",minerAddress,blockreward);
+      rewardTx.signatureHex="System";
+      mempool.insert(mempool.begin(),rewardTx);
+
+      //  create new block with the mempool tx
+      Block newBlock(chain.size(),mempool,getLatestBlock().hash);
+
+      time_t start=time(0);
+      newBlock.mineBlock(difficulty);
+      time_t end=time(0);
+
+      chain.push_back(newBlock);
+      mempool.clear();
+      int minetime= int(difftime(end,start));
+      if(minetime<targetBlocktime){
+        difficulty++;
+        cout<< "Difficulty increased to: " << difficulty << endl;
+      }
+      else{
+        difficulty--;
+        cout<<"Difficulty decreased to: "<< difficulty<< endl;
+      }
+
+}
 
 // Print blockchain
 void Blockchain::printBlockchain() const {

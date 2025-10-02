@@ -117,7 +117,7 @@ class Blockchain{
         // creates new block with given data and adds its to the chain
         void addTransaction(const Transaction &tx); //mempool m add hogi transaction
         void minePendingTransactions(const string& minerAddress); //mine all pending transactions 
-        void addBlock(vector<Transaction> transactions );
+      
         // print all the blocks from the  blockchain for debugging or output
         void printBlockchain() const;
         // check validity of chain
