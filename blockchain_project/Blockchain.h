@@ -60,13 +60,24 @@ struct Transaction {
         timestamp=string(buf);
 
     }
-    // transaction string 
-    string toString() const{
+    // For human-readable printing
+    string toString() const {
         stringstream ss;
-        ss<<senderPubKey<<" | "<<receiverPubKey<<" | "<<fixed << setprecision(8)<< amount<<" BTC "<< " at "<<timestamp;
+        ss << senderPubKey << " | " << receiverPubKey << " | "
+           << fixed << setprecision(8) << amount << " BTC "
+           << " at " << timestamp;
         return ss.str();
     }
 
+    // For signing and verifying (deterministic, no extra formatting)
+    string canonicalString() const {
+        stringstream ss;
+        ss << senderPubKey << "|" 
+           << receiverPubKey << "|" 
+           << fixed << setprecision(8) << amount << "|" 
+           << timestamp;
+        return ss.str();
+    }
 
 };
 string sha256(const string str);

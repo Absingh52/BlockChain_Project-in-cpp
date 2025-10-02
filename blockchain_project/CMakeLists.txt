@@ -11,6 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(blockchain
     main.cpp
     Blockchain.cpp
+    Wallet.cpp
 )
 
 # Find OpenSSL

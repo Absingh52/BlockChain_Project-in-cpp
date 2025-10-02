@@ -21,7 +21,7 @@ Wallet::Wallet(){
     // exporting the private key to PEM format
     BIO* privbio=BIO_new(BIO_s_mem());// creating memory buffer
     // paasing private key to memorybuffer and nullptrs are for no encrypt and password
-    PEM_write_ECPrivateKey(privbio,key,nullptr,nullptr,0,nullptr,nullptr);
+    PEM_write_bio_ECPrivateKey(privbio,key,nullptr,nullptr,0,nullptr,nullptr);
     
     char* pdata;
     long plen=BIO_get_mem_data(privbio,&pdata);// length and address of the data
@@ -32,7 +32,7 @@ Wallet::Wallet(){
     //  export the public key to Pem format
 
      BIO* pubbio=BIO_new(BIO_s_mem());
-     PEM_write_EC_PUBKEY(pubbio,key);
+     PEM_write_bio_EC_PUBKEY(pubbio,key);
      char* qdata;
      long qlen=BIO_get_mem_data(pubbio,&qlen);
      public_key.assign(qdata,qlen);

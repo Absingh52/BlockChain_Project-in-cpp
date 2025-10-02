@@ -116,7 +116,7 @@ void Blockchain::addTransaction(const Transaction &tx)
 {
   // check if the transaction is of the system if yes then continue
   if(tx.senderPubKey != "System"){
-      if(! Wallet::verify(tx.toString(), tx.senderPubKey,tx.signatureHex)){
+      if(! Wallet::verify(tx.canonicalString(), tx.senderPubKey,tx.signatureHex)){
             cout<<" Invalid transaction signautre"<<endl;
             return;
       }
