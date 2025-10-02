@@ -1,4 +1,4 @@
-# 🧱 Mini Blockchain in C++
+#  Mini Blockchain in C++
 
 This is a mini blockchain project built in **C++** with **OpenSSL** for cryptography.  
 It demonstrates the core building blocks of a blockchain system:  
@@ -122,3 +122,4 @@ mkdir build
 cd build
 cmake ..
 make
+
