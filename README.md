@@ -1,142 +1,124 @@
-# BlockChain\_Project-in-cpp
+# 🧱 Mini Blockchain in C++
 
-# ⛓️ Mini Blockchain in C++class Solution {
-
-  public:
-    // Function to find minimum number of pages.
-    bool isPossible( int n,int m,int mid, vector<int>&arr){
-        int studentCount=1;
-        int pagesum=0;
-        for(int i=0;i<n;i++){
-          if(pagesum+arr[i]<=mid){
-            pagesum=pagesum+arr[i];
-          }
-          else{
-            studentCount++;
-              if(studentCount>m || arr[i]>mid){
-                return false;
-              }
-              pagesum=arr[i];
-          }
-        }
-        return true;
-    }
-
-    long long findPages(int n, vector<int>arr, int m) { 
-      if(m>n){
-        return-1;
-      }
-       int min=0;
-       int max=0;
-       for(int i=0;i<n;i++){
-         max=max+arr[i];
-       }
-      int s=min;
-       int e=max;
-      int ans=-1;
-       int mid=s+(e-s)/2;
-       while(s<=e){
-        if(isPossible(n, m, mid, arr))
-             { ans=mid;
-              e=mid-1;}
-         else{
-           s=mid+1;
-         }
-          mid=s+(e-s)/2;
-       }
-       return ans;
-    }
-};
-
-This project is a **mini blockchain implementation in C++** built from scratch using **SHA-256 (OpenSSL)** for hashing.
-It demonstrates **core blockchain concepts** such as blocks, hashing, Proof-of-Work (PoW), nonce, chain validation, **Merkle root for transactions**, and **dynamic difficulty adjustment**.
-![CMake Build](https://github.com/Absingh52/BlockChain_Project-in-cpp/actions/workflows/cmake-multi-platform.yml/badge.svg)
+This is a mini blockchain project built in **C++** with **OpenSSL** for cryptography.  
+It demonstrates the core building blocks of a blockchain system:  
+- Wallets with Public/Private keys and Digital Signatures  
+- Transactions stored in a Mempool  
+- Mining with Proof of Work (difficulty adjustment)  
+- Block rewards for miners  
+- Merkle Tree for transaction integrity  
+- Chain validation  
 
 ---
 
-## 🚀 Features Implemented
+## 🚀 Project Flow
 
-* ✅ **Block Structure**: index, data/transactions, timestamp, previous hash, hash, nonce, merkle root
-* ✅ **SHA-256 Hashing** with OpenSSL
-* ✅ **Proof-of-Work (Mining)** with configurable difficulty
-* ✅ **Nonce** to repeatedly try hashes until target is met
-* ✅ **Chain Validation (`isChainValid`)** to detect tampering
-* ✅ **Dynamic Difficulty Adjustment** based on mining time
-* ✅ **Genesis Block Creation** (first block of the chain)
-* ✅ **User Input for Difficulty & Target Block Time**
-* ✅ **Merkle Root Calculation** for transaction transparency
+### 1. Wallets (`Wallet.h` / `Wallet.cpp`)
+- Every user has a **wallet**.  
+- A wallet generates a **private key** (secret) and a **public key** (identity).  
+- Private key is used to **sign transactions**.  
+- Public key is used by others to **verify transactions**.  
 
-  * Converts plain block data into **transactions**
-  * Computes a **Merkle root hash** for all transactions in a block
-  * Provides a single, secure digest of all block transactions
+**Functions:**
+- `Wallet()` → generates new EC key pair (secp256k1 curve).  
+- `sign(msg)` → signs a message (usually transaction data) with private key.  
+- `verify(pubKey, msg, signHex)` → checks if a signature is valid using sender’s public key.  
 
 ---
 
-## 🛠️ Tech Stack
+### 2. Transactions (`Blockchain.h`)
+- A **transaction** means value transfer from one wallet to another.  
+- Each transaction has:
+  - `senderPubKey` → who is sending  
+  - `receiverPubKey` → who receives  
+  - `amount` → how much value  
+  - `timestamp` → when created  
+  - `signatureHex` → proof (signed by sender’s private key)  
 
-* **Language:** C++
-* **Libraries:**
-
-  * `<openssl/sha.h>` → SHA-256 hashing
-  * `<vector>, <string>, <ctime>` → standard C++ utilities
-* **Build System:** CMake
-
----
-
-## 📂 Project Structure
-
-.
-├── Blockchain.h # Header file with Block & Blockchain class declarations
-├── Blockchain.cpp # Implementation of hashing, mining, validation, merkle root
-├── main.cpp # Entry point - runs the blockchain
-├── CMakeLists.txt # Build configuration
-└── README.md # Project documentation
+**Functions:**
+- `toString()` → converts transaction into readable string.  
+- `canonicalString()` (optional) → deterministic string used for signing/verification.  
 
 ---
 
-## ⚡ How It Works
+### 3. Blocks (`Blockchain.h` / `Blockchain.cpp`)
+- A block groups multiple transactions.  
+- Each block contains:
+  - `index` → position in chain  
+  - `timestamp` → creation time  
+  - `transcation` → list of transactions  
+  - `prevHash` → hash of previous block (linking blocks)  
+  - `hash` → unique fingerprint of this block  
+  - `merkleRoot` → hash of all transactions combined (via Merkle tree)  
+  - `nonce` → number used in Proof-of-Work  
 
-1. **Genesis Block**
-
-   * First block is created manually and mined.
-
-2. **Adding a Block**
-
-   * New block contains: index, transactions, timestamp, previous hash.
-   * All transactions in a block are hashed into a **Merkle root**.
-   * Block is mined using **Proof-of-Work** → hash must start with N leading zeros (difficulty).
-   * Mining repeats by changing the **nonce** until success.
-
-3. **Dynamic Difficulty**
-
-   * If a block mines **too fast**, difficulty increases.
-   * If a block mines **too slow**, difficulty decreases.
-   * Mimics how real blockchains (like Bitcoin) adjust mining difficulty.
-
-4. **Validation**
-
-   * Recalculates each block’s hash.
-   * Verifies **Merkle root** matches block transactions.
-   * Ensures `prevHash` matches the previous block’s hash.
-   * If any block or transaction is tampered, the chain becomes invalid.
+**Functions:**
+- `calculateHash()` → generates hash using block contents.  
+- `calculateMerkleRoot()` → builds a Merkle tree of all transactions, returns root hash.  
+- `mineBlock(difficulty)` → repeatedly changes `nonce` until hash starts with `difficulty` zeros (Proof of Work).  
+- `getTime()` → fetches system time as string.  
 
 ---
 
-## 🖥️ Example Run
+### 4. Blockchain (`Blockchain.h` / `Blockchain.cpp`)
+- The blockchain is a vector of blocks (`vector<Block> chain`).  
+- It also has a **mempool** (pending transactions).  
+- Blocks are mined one by one and linked with `prevHash`.  
 
-Enter starting difficulty: 3
-Enter target block time (seconds): 5
+**Functions:**
+- `Blockchain(diff, targetTime)` → constructor, creates **genesis block**.  
+- `getLatestBlock()` → returns last block in the chain.  
+- `addTransaction(tx)` → verifies transaction signature, then adds to mempool.  
+- `minePendingTransactions(minerAddress)` →  
+  1. Creates a **reward transaction** for miner.  
+  2. Takes all mempool transactions.  
+  3. Creates new block and mines it (Proof of Work).  
+  4. Adds block to chain and clears mempool.  
+  5. Adjusts difficulty depending on mining time.  
+- `printBlockchain()` → prints all blocks and transactions.  
+- `isChainValid()` → verifies the entire chain:
+  - Each block’s hash must be correct.  
+  - Each block’s `prevHash` must match previous block.  
+  - Merkle root must be valid.  
 
-Block mined: 000ad3c...
-⏳ Mining time: 2 seconds
-⚡ Difficulty increased to 4
+---
 
-Block mined: 0000f19...
-⏳ Mining time: 7 seconds
-🐢 Difficulty decreased to 3
+### 5. Main Program (`main.cpp`)
+The main program demonstrates the blockchain:
 
-Transactions in block: \[Alice→Bob: 10, Bob→Charlie: 5]
-Merkle Root: 5f3a9c...
+1. Create wallets: Alice, Bob, Miner.  
+2. Alice → Bob transaction (signed by Alice).  
+3. Bob → Alice transaction (signed by Bob).  
+4. Add both to mempool with `addTransaction()`.  
+5. Miner mines block using `minePendingTransactions(miner.public_key)`.  
+6. Print blockchain with all details.  
+7. Validate chain with `isChainValid()`.  
 
-Blockchain valid? Yes
+---
 
+## ⚡ Example Flow
+
+1. **Alice → Bob (10 BTC)** transaction created.  
+2. Transaction verified → added to mempool.  
+3. **Bob → Alice (5 BTC)** transaction created.  
+4. Transaction verified → added to mempool.  
+5. Miner calls `minePendingTransactions(minerPubKey)`.  
+   - Reward transaction added: `System → Miner (50 BTC)`  
+   - Block created with `[RewardTx, Alice→Bob, Bob→Alice]`  
+   - Block mined with Proof-of-Work.  
+6. Chain prints with all blocks and transactions.  
+
+---
+
+## 🛠️ Build Instructions
+
+### Requirements
+- C++17  
+- OpenSSL library  
+
+### Build with CMake
+```bash
+mkdir build
+cd build
+cmake ..
+make
