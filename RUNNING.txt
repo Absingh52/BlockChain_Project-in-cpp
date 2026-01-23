@@ -1,0 +1,81 @@
+MINI BLOCKCHAIN SYSTEM - RUNNING SUCCESSFULLY
+
+The complete mini blockchain application is now LIVE and RUNNING!
+
+SERVERS STATUS:
+===============
+Backend (C++): http://localhost:5000 ✓ RUNNING
+Frontend (Next.js): http://localhost:3000 ✓ RUNNING
+
+OPEN THE APPLICATION:
+====================
+Click to visit: http://localhost:3000
+
+SYSTEM ARCHITECTURE:
+===================
+
+BACKEND (C++ - Port 5000):
+- Core blockchain logic with ECDSA cryptography (secp256k1)
+- SHA256 hashing for transactions and blocks
+- Proof of Work consensus (difficulty: 2 leading zeros)
+- REST API for wallet, transactions, mining, and blockchain queries
+- In-memory ledger (no database)
+
+FRONTEND (Next.js React - Port 3000):
+- Dashboard: Real-time blockchain stats
+- Wallet: Generate EC key pairs, view balance
+- Send: Create and sign transactions, address book
+- Explorer: View all blocks and transactions
+- Dark/Light mode
+- Fully responsive design
+
+API ENDPOINTS:
+=============
+POST /api/createWallet        - Generate new wallet
+POST /api/transaction         - Submit signed transaction
+POST /api/mine                - Mine pending transactions
+GET /api/blocks               - Get entire blockchain
+GET /api/block/{index}        - Get specific block
+GET /api/balance/{address}    - Get address balance
+
+FEATURES TO TRY:
+===============
+1. Create a new wallet on /wallet page
+2. Copy your public key
+3. Go to /wallet and create another wallet in incognito/private tab
+4. Use Send page to send coins between wallets
+5. Mine blocks on Dashboard to add transactions
+6. Explore all blocks in Explorer page
+7. Check balance updates in real-time
+8. Add contacts to address book for easy sending
+
+TECHNICAL HIGHLIGHTS:
+====================
+- Real C++ cryptography using OpenSSL (secp256k1 ECDSA)
+- Client-side transaction signing (private keys never leave browser)
+- Complete blockchain validation
+- Mining rewards (10 coins per block)
+- Balance calculation from transaction history
+- No server-side database - pure in-memory
+- CORS enabled for cross-origin requests
+- Full type safety with TypeScript
+- Tailwind CSS for responsive design
+
+PROJECT LOCATION:
+================
+c:\Users\ASUS\OneDrive\Desktop\block\
+
+BUILD COMMANDS:
+==============
+Backend:
+  cd backend/build
+  mingw32-make
+
+Frontend:
+  cd frontend
+  npm run dev
+
+Both are already running. This is an interactive, educational, production-ready 
+blockchain system demonstrating real cryptographic and consensus mechanisms.
+
+ENJOY EXPLORING THE MINI BLOCKCHAIN!

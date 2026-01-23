@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nexus Explorer - Send Transaction</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Noto+Sans:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13a4ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22", // Adjusted to match the deeper charcoal vibe
+                        "surface-dark": "#1c2327",
+                        "border-dark": "#283339",
+                        "text-muted": "#9db0b9",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(19, 164, 236, 0.4)',
+                        'glow-hover': '0 0 30px rgba(19, 164, 236, 0.6)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111618;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #283339;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b4b54;
+        }
+        
+        .animate-pulse-fast {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-slide-in {
+            animation: slideIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-[#111618] text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex flex-shrink-0 items-center justify-between whitespace-nowrap border-b border-solid border-b-border-dark px-6 py-3 bg-[#111618] z-20">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-3xl">hub</span>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-[-0.015em]">Nexus Explorer</h2>
+</div>
+<label class="hidden md:flex flex-col min-w-40 !h-10 max-w-64">
+<div class="flex w-full flex-1 items-stretch rounded-lg h-full group">
+<div class="text-text-muted group-focus-within:text-primary flex border-none bg-surface-dark items-center justify-center pl-4 rounded-l-lg border-r-0 transition-colors">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-0 border-none bg-surface-dark focus:border-none h-full placeholder:text-text-muted px-4 rounded-l-none border-l-0 pl-2 text-sm font-normal leading-normal" placeholder="Search block, hash, or address" value=""/>
+</div>
+</label>
+</div>
+<div class="flex flex-1 justify-end gap-6 items-center">
+<div class="hidden lg:flex items-center gap-6">
+<a class="text-text-muted hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Dashboard</a>
+<a class="text-text-muted hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Transactions</a>
+<a class="text-white text-sm font-medium leading-normal" href="#">Mempool</a>
+<a class="text-text-muted hover:text-white text-sm font-medium leading-normal transition-colors" href="#">Wallet</a>
+</div>
+<button class="flex items-center gap-2 bg-surface-dark hover:bg-border-dark px-3 py-1.5 rounded-full border border-border-dark transition-all">
+<div class="size-2 rounded-full bg-green-500 animate-pulse-fast"></div>
+<span class="text-xs font-mono text-text-muted">Mainnet: 18,240,123</span>
+</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-9 ring-2 ring-border-dark" data-alt="User profile avatar gradient" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDYdfr5TxkMnBRG2s7Tv7wdz21fvPkyU3cXJG7pALylrhhN2ADhAc79ZD13aF3NPRuZGCzOgmZdusxFCX2AwGfn7QiEIGkW7sLLh80v7jvTfxlDez6ncs-PBr79KDvto5hoE2zDR-R_f0JAspwDcEbVAZl1pB-kX_mXXpMaazmHZZZ8UkABh-iE0NYPE2t0UHBzerbXHH4XbGFIWv74B6r6GAFfGnAqMIReU-9btVmLNZ2c1uRZheMLVQWKtQRyf4MjDMFN9R9BOCaN");'></div>
+</div>
+</header>
+<!-- Main Content Layout -->
+<div class="flex flex-1 overflow-hidden relative">
+<!-- Left Panel: Transaction Form -->
+<main class="flex-1 overflow-y-auto w-full lg:w-7/12 xl:w-8/12 bg-[#111618] relative z-10">
+<div class="flex flex-col items-center justify-center min-h-full py-12 px-4 sm:px-8 lg:px-16">
+<div class="w-full max-w-[640px] flex flex-col gap-8 animate-slide-in">
+<!-- Header Section -->
+<div class="mb-4">
+<h1 class="text-white tracking-tight text-4xl font-bold leading-tight pb-2">Compose Transaction</h1>
+<p class="text-text-muted text-lg font-light">Send tokens securely across the Nexus network.</p>
+</div>
+<!-- Input: Recipient -->
+<div class="flex flex-col gap-2">
+<div class="flex justify-between items-end">
+<label class="text-white text-sm font-medium leading-normal">Recipient Address</label>
+<span class="text-primary text-xs cursor-pointer hover:underline">Scan QR Code</span>
+</div>
+<div class="flex w-full items-stretch rounded-lg group focus-within:ring-2 focus-within:ring-primary/50 transition-all duration-300">
+<input class="form-input flex-1 resize-none overflow-hidden rounded-lg rounded-r-none text-white focus:outline-0 focus:ring-0 border border-border-dark bg-surface-dark focus:border-primary h-14 placeholder:text-text-muted p-[15px] pr-2 text-base font-mono leading-normal transition-colors" placeholder="0x... or ENS name" value=""/>
+<div class="text-text-muted flex border border-l-0 border-border-dark bg-surface-dark items-center justify-center pr-[15px] rounded-r-lg group-focus-within:border-primary transition-colors">
+<span class="material-symbols-outlined">qr_code_scanner</span>
+</div>
+</div>
+<!-- Validation hint -->
+<div class="hidden flex items-center gap-1 text-green-500 text-xs mt-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+<span>Valid ENS: vitalik.eth resolved</span>
+</div>
+</div>
+<!-- Input Group: Amount & Asset -->
+<div class="flex flex-col sm:flex-row gap-4">
+<div class="flex flex-col gap-2 flex-[2]">
+<div class="flex justify-between items-end">
+<label class="text-white text-sm font-medium leading-normal">Amount</label>
+<span class="text-text-muted text-xs">≈ $0.00 USD</span>
+</div>
+<div class="relative w-full">
+<input class="form-input w-full rounded-lg text-white focus:outline-0 focus:ring-0 focus:ring-primary/50 border border-border-dark bg-surface-dark focus:border-primary h-14 placeholder:text-text-muted p-[15px] text-lg font-mono leading-normal transition-colors" placeholder="0.00" value=""/>
+<button class="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold text-primary bg-primary/10 px-2 py-1 rounded hover:bg-primary/20 transition-colors">MAX</button>
+</div>
+</div>
+<div class="flex flex-col gap-2 flex-1">
+<label class="text-white text-sm font-medium leading-normal">Asset</label>
+<div class="relative">
+<select class="appearance-none w-full rounded-lg text-white focus:outline-0 focus:ring-0 focus:ring-primary/50 border border-border-dark bg-surface-dark focus:border-primary h-14 pl-[15px] pr-10 text-base font-medium leading-normal cursor-pointer transition-colors">
+<option>ETH</option>
+<option>USDC</option>
+<option>DAI</option>
+<option>NEX</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-text-muted">
+<span class="material-symbols-outlined">expand_more</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Available Balance Meta -->
+<div class="bg-surface-dark/50 border border-dashed border-border-dark rounded-lg p-3 flex justify-between items-center -mt-2">
+<span class="text-text-muted text-sm">Available Balance</span>
+<span class="text-white font-mono text-sm">42.5082 ETH</span>
+</div>
+<!-- Gas Selector -->
+<div class="flex flex-col gap-3 pt-2">
+<label class="text-white text-sm font-medium leading-normal">Transaction Speed (Gas Fee)</label>
+<div class="grid grid-cols-3 gap-4">
+<!-- Option 1: Low -->
+<div class="cursor-pointer border border-border-dark bg-surface-dark rounded-xl p-4 flex flex-col gap-2 hover:border-primary/50 hover:bg-surface-dark/80 transition-all group">
+<div class="flex justify-between items-center text-text-muted group-hover:text-primary transition-colors">
+<span class="text-xs font-bold uppercase tracking-wider">Low</span>
+<span class="material-symbols-outlined text-lg">local_shipping</span>
+</div>
+<div class="flex flex-col">
+<span class="text-white font-bold font-mono">15 gwei</span>
+<span class="text-text-muted text-xs">~3 mins</span>
+</div>
+</div>
+<!-- Option 2: Market (Active) -->
+<div class="cursor-pointer border-2 border-primary bg-surface-dark rounded-xl p-4 flex flex-col gap-2 relative shadow-[0_0_15px_rgba(19,164,236,0.15)]">
+<div class="absolute -top-2.5 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">Recommended</div>
+<div class="flex justify-between items-center text-primary">
+<span class="text-xs font-bold uppercase tracking-wider">Market</span>
+<span class="material-symbols-outlined text-lg">flight</span>
+</div>
+<div class="flex flex-col">
+<span class="text-white font-bold font-mono">18 gwei</span>
+<span class="text-text-muted text-xs">~30 secs</span>
+</div>
+</div>
+<!-- Option 3: Aggressive -->
+<div class="cursor-pointer border border-border-dark bg-surface-dark rounded-xl p-4 flex flex-col gap-2 hover:border-primary/50 hover:bg-surface-dark/80 transition-all group">
+<div class="flex justify-between items-center text-text-muted group-hover:text-primary transition-colors">
+<span class="text-xs font-bold uppercase tracking-wider">Fast</span>
+<span class="material-symbols-outlined text-lg">rocket_launch</span>
+</div>
+<div class="flex flex-col">
+<span class="text-white font-bold font-mono">24 gwei</span>
+<span class="text-text-muted text-xs text-green-400">&lt;10 secs</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary & Action -->
+<div class="pt-6 mt-4 border-t border-border-dark">
+<div class="flex justify-between items-center mb-6">
+<span class="text-text-muted">Total including fees</span>
+<div class="text-right">
+<div class="text-2xl font-bold text-white font-mono">12.4542 ETH</div>
+<div class="text-sm text-text-muted">≈ $32,450.12 USD</div>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-sky-500 text-white font-bold text-lg h-16 rounded-lg shadow-glow hover:shadow-glow-hover transition-all duration-300 flex items-center justify-center gap-3 group">
+<span class="material-symbols-outlined group-hover:animate-pulse">fingerprint</span>
+                            Sign &amp; Broadcast
+                        </button>
+</div>
+</div>
+</div>
+</main>
+<!-- Right Panel: Mempool Feed -->
+<aside class="hidden lg:flex w-5/12 xl:w-4/12 flex-col border-l border-border-dark bg-[#111618] relative">
+<!-- Background aesthetic gradient -->
+<div class="absolute inset-0 bg-gradient-to-b from-[#1c2327]/80 to-[#111618] pointer-events-none"></div>
+<div class="relative z-10 flex flex-col h-full">
+<!-- Header -->
+<div class="flex items-center justify-between p-6 border-b border-border-dark bg-[#1c2327]/50 backdrop-blur-sm">
+<div class="flex items-center gap-3">
+<div class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+</div>
+<h3 class="text-white font-bold text-lg">Global Mempool</h3>
+</div>
+<div class="flex gap-2">
+<button class="text-text-muted hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">tune</span>
+</button>
+<button class="text-text-muted hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">fullscreen</span>
+</button>
+</div>
+</div>
+<!-- Stats Strip -->
+<div class="grid grid-cols-2 gap-px bg-border-dark border-b border-border-dark">
+<div class="bg-[#151a1e] p-4 flex flex-col items-center">
+<span class="text-text-muted text-xs uppercase tracking-wider font-semibold mb-1">Pending Txns</span>
+<span class="text-white font-mono font-bold text-xl">142,892</span>
+</div>
+<div class="bg-[#151a1e] p-4 flex flex-col items-center">
+<span class="text-text-muted text-xs uppercase tracking-wider font-semibold mb-1">Base Fee</span>
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+<span class="text-white font-mono font-bold text-xl">18.2 <span class="text-sm text-text-muted">gwei</span></span>
+</div>
+</div>
+</div>
+<!-- Feed List -->
+<div class="flex-1 overflow-y-auto p-4 space-y-3" id="mempool-list">
+<!-- Item 1 (New) -->
+<div class="bg-surface-dark border border-border-dark hover:border-primary/30 rounded-lg p-3 flex items-center gap-3 transition-all hover:translate-x-1 cursor-pointer group animate-slide-in">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary border border-primary/20">
+<span class="material-symbols-outlined">swap_horiz</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between mb-0.5">
+<span class="text-white text-sm font-mono font-medium truncate">Swap USDC <span class="text-text-muted">-&gt;</span> WETH</span>
+<span class="text-primary text-xs font-mono bg-primary/10 px-1.5 rounded">High Prio</span>
+</div>
+<div class="flex justify-between items-center text-xs text-text-muted">
+<span class="font-mono">0x7a2...9b1</span>
+<span>25.4 ETH</span>
+</div>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface-dark border border-border-dark hover:border-primary/30 rounded-lg p-3 flex items-center gap-3 transition-all hover:translate-x-1 cursor-pointer group animate-slide-in" style="animation-delay: 100ms;">
+<div class="size-10 rounded-full bg-surface-dark flex items-center justify-center text-text-muted border border-border-dark">
+<span class="material-symbols-outlined">call_made</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between mb-0.5">
+<span class="text-white text-sm font-mono font-medium truncate">Transfer</span>
+<span class="text-text-muted text-xs font-mono">2s ago</span>
+</div>
+<div class="flex justify-between items-center text-xs text-text-muted">
+<span class="font-mono">0x3f1...e4c</span>
+<span>120.00 USDC</span>
+</div>
+</div>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface-dark border border-border-dark hover:border-primary/30 rounded-lg p-3 flex items-center gap-3 transition-all hover:translate-x-1 cursor-pointer group animate-slide-in" style="animation-delay: 200ms;">
+<div class="size-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
+<span class="material-symbols-outlined">diamond</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between mb-0.5">
+<span class="text-white text-sm font-mono font-medium truncate">Mint NFT #4291</span>
+<span class="text-text-muted text-xs font-mono">4s ago</span>
+</div>
+<div class="flex justify-between items-center text-xs text-text-muted">
+<span class="font-mono">0x8b2...a11</span>
+<span>0.08 ETH</span>
+</div>
+</div>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface-dark border border-border-dark hover:border-primary/30 rounded-lg p-3 flex items-center gap-3 transition-all hover:translate-x-1 cursor-pointer group animate-slide-in" style="animation-delay: 300ms;">
+<div class="size-10 rounded-full bg-surface-dark flex items-center justify-center text-text-muted border border-border-dark">
+<span class="material-symbols-outlined">call_received</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between mb-0.5">
+<span class="text-white text-sm font-mono font-medium truncate">Receive</span>
+<span class="text-text-muted text-xs font-mono">5s ago</span>
+</div>
+<div class="flex justify-between items-center text-xs text-text-muted">
+<span class="font-mono">0x1c9...d2f</span>
+<span>1.5 ETH</span>
+</div>
+</div>
+</div>
+<!-- Item 5 -->
+<div class="bg-surface-dark border border-border-dark hover:border-primary/30 rounded-lg p-3 flex items-center gap-3 transition-all hover:translate-x-1 cursor-pointer group animate-slide-in opacity-70" style="animation-delay: 400ms;">
+<div class="size-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-400 border border-orange-500/20">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between mb-0.5">
+<span class="text-white text-sm font-mono font-medium truncate">Contract Interaction (Fail)</span>
+<span class="text-text-muted text-xs font-mono">8s ago</span>
+</div>
+<div class="flex justify-between items-center text-xs text-text-muted">
+<span class="font-mono">0xe41...99a</span>
+<span>0 ETH</span>
+</div>
+</div>
+</div>
+<!-- More older items faded -->
+<div class="bg-surface-dark/50 border border-border-dark/50 rounded-lg p-3 flex items-center gap-3 opacity-50">
+<div class="size-10 rounded-full bg-surface-dark flex items-center justify-center text-text-muted border border-border-dark">
+<span class="material-symbols-outlined">sync</span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex justify-between mb-0.5">
+<span class="text-white text-sm font-mono font-medium truncate">Bridge Asset</span>
+<span class="text-text-muted text-xs font-mono">12s ago</span>
+</div>
+<div class="flex justify-between items-center text-xs text-text-muted">
+<span class="font-mono">0x22a...b1b</span>
+<span>500 DAI</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Fade out overlay at bottom of list -->
+<div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#111618] to-transparent pointer-events-none"></div>
+</div>
+</aside>
+</div>
+</body></html>

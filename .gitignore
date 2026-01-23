@@ -1,0 +1,17 @@
+.env.local
+node_modules
+.next
+.DS_Store
+*.pem
+dist
+build
+*.o
+*.a
+*.so
+.vscode
+.idea
+CMakeFiles
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+blockchain_server
