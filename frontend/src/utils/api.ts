@@ -143,6 +143,34 @@ export const api = {
       throw error
     }
   },
+
+  sendDummy: async (sender: string, receiver: string, amount: number) => {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+      try {
+        const res = await fetch(`${API_BASE}/api/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sender, receiver, amount }),
+          signal: controller.signal,
+        })
+
+        clearTimeout(timeoutId)
+        return await handleResponse(res)
+      } catch (error: any) {
+        clearTimeout(timeoutId)
+        if (error.name === 'AbortError') {
+          throw new Error('Request timeout - server not responding')
+        }
+        throw error
+      }
+    } catch (error: any) {
+      console.error('Send transaction error:', error)
+      throw error
+    }
+  },
 }
 
 // Client-side transaction signing simulation

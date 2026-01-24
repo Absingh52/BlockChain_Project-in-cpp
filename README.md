@@ -410,5 +410,6 @@ Happy blockchain learning!
 ## Notes
 
 This is an educational implementation demonstrating blockchain fundamentals. It is not production-ready and should not be used with real funds.
-#   B l o c k C h a i n _ P r o j e c t - i n - c p p  
+#   B l o c k C h a i n _ P r o j e c t - i n - c p p 
+ 
  

@@ -8,6 +8,7 @@ import {
   HiOutlineHome,
   HiOutlineWallet,
   HiOutlinePaperAirplane,
+  HiOutlineArrowDownTray,
   HiOutlineEye,
   HiOutlineMoon,
   HiOutlineSun,
@@ -47,6 +48,7 @@ export function Header() {
     { href: '/', label: 'Dashboard', icon: HiOutlineHome },
     { href: '/wallet', label: 'Wallet', icon: HiOutlineWallet },
     { href: '/send', label: 'Send', icon: HiOutlinePaperAirplane },
+    { href: '/receive', label: 'Receive', icon: HiOutlineArrowDownTray },
     { href: '/explorer', label: 'Explorer', icon: HiOutlineEye },
   ]
 

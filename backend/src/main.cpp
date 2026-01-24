@@ -7,6 +7,7 @@
 #include <regex>
 #include <iomanip>
 #include <cmath>
+#include <ctime>
 
 #ifdef _WIN32
     #include <winsock2.h>
@@ -24,6 +25,17 @@
 
 // Global blockchain instance
 Blockchain blockchain(2); // difficulty = 2
+
+// Dummy transaction structure for demo
+struct DummyTransaction {
+    std::string sender;
+    std::string receiver;
+    double amount;
+    long long timestamp;
+};
+
+// Vector to store dummy transactions in memory
+std::vector<DummyTransaction> dummyTransactions;
 
 // Simple JSON builder helpers
 std::string jsonString(const std::string& value) {
@@ -230,6 +242,59 @@ void handleGetBalance(int clientSocket, const std::string& address) {
     }
 }
 
+// Handle POST /api/send (DUMMY DEMO)
+void handleDummySend(int clientSocket, const std::string& requestBody) {
+    try {
+        std::string sender = extractJsonString(requestBody, "sender");
+        std::string receiver = extractJsonString(requestBody, "receiver");
+        double amount = extractJsonNumber(requestBody, "amount");
+        
+        if (sender.empty() || receiver.empty() || amount <= 0) {
+            std::string response = "{\"success\":false,\"error\":\"Invalid sender, receiver, or amount\"}";
+            sendHttpResponse(clientSocket, 400, "application/json", response);
+            return;
+        }
+        
+        // Store dummy transaction in memory
+        DummyTransaction dummyTx;
+        dummyTx.sender = sender;
+        dummyTx.receiver = receiver;
+        dummyTx.amount = amount;
+        dummyTx.timestamp = (long long)(std::time(nullptr) * 1000); // milliseconds
+        
+        dummyTransactions.push_back(dummyTx);
+        
+        std::string response = "{\"success\":true,\"message\":\"Dummy transaction stored\"}";
+        sendHttpResponse(clientSocket, 200, "application/json", response);
+    } catch (const std::exception& e) {
+        std::string response = "{\"success\":false,\"error\":" + jsonString(e.what()) + "}";
+        sendHttpResponse(clientSocket, 500, "application/json", response);
+    }
+}
+
+// Handle GET /api/mempool (DUMMY DEMO)
+void handleDummyMempool(int clientSocket) {
+    try {
+        std::string response = "{\"success\":true,\"transactions\":[";
+        
+        bool first = true;
+        for (const auto& tx : dummyTransactions) {
+            if (!first) response += ",";
+            response += "{\"sender\":" + jsonString(tx.sender) + 
+                       ",\"receiver\":" + jsonString(tx.receiver) + 
+                       ",\"amount\":" + jsonNumber(tx.amount) + 
+                       ",\"timestamp\":" + jsonNumber(tx.timestamp) + "}";
+            first = false;
+        }
+        
+        response += "],\"count\":" + jsonNumber(dummyTransactions.size()) + "}";
+        sendHttpResponse(clientSocket, 200, "application/json", response);
+    } catch (const std::exception& e) {
+        std::string response = "{\"success\":false,\"error\":" + jsonString(e.what()) + "}";
+        sendHttpResponse(clientSocket, 500, "application/json", response);
+    }
+}
+
 // Parse HTTP request and route to handler
 void handleRequest(int clientSocket, const std::string& request) {
     std::istringstream iss(request);
@@ -253,8 +318,12 @@ void handleRequest(int clientSocket, const std::string& request) {
         handleTransaction(clientSocket, body);
     } else if (method == "POST" && path == "/api/mine") {
         handleMine(clientSocket, body);
+    } else if (method == "POST" && path == "/api/send") {
+        handleDummySend(clientSocket, body);
     } else if (method == "GET" && path == "/api/blocks") {
         handleGetBlocks(clientSocket);
+    } else if (method == "GET" && path == "/api/mempool") {
+        handleDummyMempool(clientSocket);
     } else if (method == "GET" && path.substr(0, 11) == "/api/block/") {
         std::string indexStr = path.substr(11);
         handleGetBlock(clientSocket, indexStr);

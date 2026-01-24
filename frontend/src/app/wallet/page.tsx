@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 import gsap from 'gsap'
 import Navbar from '@/components/Navbar'
@@ -91,12 +92,16 @@ export default function WalletPage() {
                 <p className="mb-2 text-sm text-slate-400">Total Asset Value</p>
                 <h1 className="mb-6 text-5xl font-bold text-white">$12,450.32</h1>
                 <div className="flex gap-4">
-                  <button className="px-6 py-2 text-sm font-bold text-white transition-colors rounded-lg bg-primary hover:bg-sky-400">
-                    Send
-                  </button>
-                  <button className="px-6 py-2 text-sm font-bold text-white rounded-lg bg-[#283339] hover:bg-[#3b4b54] transition-colors">
-                    Receive
-                  </button>
+                  <Link href="/send">
+                    <button className="px-6 py-2 text-sm font-bold text-white transition-colors rounded-lg bg-primary hover:bg-sky-400">
+                      Send
+                    </button>
+                  </Link>
+                  <Link href="/receive">
+                    <button className="px-6 py-2 text-sm font-bold text-white rounded-lg bg-[#283339] hover:bg-[#3b4b54] transition-colors">
+                      Receive
+                    </button>
+                  </Link>
                 </div>
               </div>
             </motion.div>
